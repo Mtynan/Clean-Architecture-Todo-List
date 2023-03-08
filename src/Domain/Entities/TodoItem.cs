@@ -10,5 +10,6 @@ namespace Domain.Entities
     public class TodoItem : EntityBase
     {
         public string Title { get; set; }
+        public int ListId { get; set; }
     }
 }

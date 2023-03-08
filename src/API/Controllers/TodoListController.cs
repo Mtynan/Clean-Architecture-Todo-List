@@ -1,4 +1,5 @@
 ﻿using Application;
+using Application.Common;
 using Application.TodoListFeatures.Commands;
 using Application.TodoListFeatures.Queries;
 using Domain.Entities;
@@ -22,15 +23,21 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<int>> CreateTodoList(CreateTodoListCommand command)
+        public async Task<ActionResult<Response>> CreateTodoList(CreateTodoListCommand command)
         {
             return await Mediator.Send(new CreateTodoListCommand { Title = command.Title });
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<int>> UpdateTodoList(UpdateTodoListCommand command)
+        public async Task<ActionResult<Response>> UpdateTodoList(UpdateTodoListCommand command)
         {
             return await Mediator.Send(new UpdateTodoListCommand { Title = command.Title, Id = command.Id });
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<Response>> DeleteTodoList(DeleteTodoListCommand command)
+        {
+            return await Mediator.Send(new DeleteTodoListCommand { Id = command.Id });
         }
     }
 }
