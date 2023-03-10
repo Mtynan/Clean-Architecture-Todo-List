@@ -10,34 +10,28 @@ namespace API.Controllers
 {
     public class TodoItemController : BaseApiController
     {
-        private readonly IMyDependency _myDependency;
-        public TodoItemController(ApplicationDbContext context, IMyDependency myDependency)
-        {
-            _myDependency = myDependency;
-        }
-
         [HttpGet]
-        public async Task<ActionResult<List<TodoItem>>> GetTodoItems()
+        public async Task<IActionResult> GetTodoItems()
         {
-            return await Mediator.Send(new GetTodoItemQuery());
+            return HandleResult(await Mediator.Send(new GetTodoItemQuery()));
         }
 
         [HttpPost]
-        public async Task<ActionResult<Response>> CreateTodoItem(CreateTodoItemCommand command)
+        public async Task<IActionResult> CreateTodoItem(CreateTodoItemCommand command)
         {
-            return await Mediator.Send(new CreateTodoItemCommand { Title = command.Title, ListId = command.ListId });
+            return HandleResult(await Mediator.Send(new CreateTodoItemCommand { Title = command.Title, ListId = command.ListId }));
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<Response>> UpdateTodoItem(UpdateTodoItemCommand command)
+        public async Task<IActionResult> UpdateTodoItem(UpdateTodoItemCommand command)
         {
-            return await Mediator.Send(new UpdateTodoItemCommand { Title = command.Title, ListId = command.ListId });
+            return HandleResult(await Mediator.Send(new UpdateTodoItemCommand { Title = command.Title, ListId = command.ListId }));
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Response>> DeleteTodoItem(DeleteTodoItemCommand command)
+        public async Task<IActionResult> DeleteTodoItem(DeleteTodoItemCommand command)
         {
-            return await Mediator.Send(new DeleteTodoItemCommand(command.id));
+            return HandleResult(await Mediator.Send(new DeleteTodoItemCommand(command.id)));
         }
     }
 }
