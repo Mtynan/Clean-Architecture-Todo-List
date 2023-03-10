@@ -4,12 +4,12 @@ using MediatR;
 
 namespace Application.TodoListFeatures.Commands
 {
-    public record DeleteTodoListCommand : IRequest<Response>
+    public record DeleteTodoListCommand : IRequest<Response<Unit>>
     {
         public int Id { get; set; }
     }
 
-    public class DeleteTodoListHandler : IRequestHandler<DeleteTodoListCommand, Response>
+    public class DeleteTodoListHandler : IRequestHandler<DeleteTodoListCommand, Response<Unit>>
     {
         private readonly IApplicationDbContext _context;
 
@@ -18,7 +18,7 @@ namespace Application.TodoListFeatures.Commands
             _context = context ?? throw new ArgumentNullException(nameof(IApplicationDbContext), $"{nameof(IApplicationDbContext)} cannot be null");
         }
 
-        public async Task<Response> Handle(DeleteTodoListCommand request, CancellationToken cancellationToken)
+        public async Task<Response<Unit>> Handle(DeleteTodoListCommand request, CancellationToken cancellationToken)
         {
             try
             {
@@ -32,15 +32,16 @@ namespace Application.TodoListFeatures.Commands
                 _context.TodoList.Remove(entity);
                 await _context.SaveChangesAsync(cancellationToken);
 
-                return new Response { Success = true };
+                return Response<Unit>.Success(Unit.Value);
 
             }
             catch (Exception e)
             {
-                return new Response { Success = false };
+                return Response<Unit>.Failure("Error deleting todo item");
             }
 
         }
 
     }
 }
+

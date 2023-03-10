@@ -21,8 +21,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(opt =>
     opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-builder.Services.AddSingleton<IMyDependency, MyDependency>();
-
 
 var app = builder.Build();
 

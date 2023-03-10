@@ -8,13 +8,13 @@ using MediatR;
 
 namespace Application.TodoListFeatures.Commands
 {
-    public record CreateTodoItemCommand : IRequest<Response>
+    public record CreateTodoItemCommand : IRequest<Response<TodoItem>>
     {
         public string Title { get; init; }
         public int ListId { get; set; }
     }
 
-    public class CreateTodoItemHandler : IRequestHandler<CreateTodoItemCommand, Response>
+    public class CreateTodoItemHandler : IRequestHandler<CreateTodoItemCommand, Response<TodoItem>>
     {
         private readonly IApplicationDbContext _context;
 
@@ -23,18 +23,21 @@ namespace Application.TodoListFeatures.Commands
             _context = context ?? throw new ArgumentNullException(nameof(IApplicationDbContext), $"{nameof(IApplicationDbContext)} cannot be null");
         }
 
-        public async Task<Response> Handle(CreateTodoItemCommand request, CancellationToken cancellationToken)
+        public async Task<Response<TodoItem>> Handle(CreateTodoItemCommand request, CancellationToken cancellationToken)
         {
             var entity = new TodoItem();
 
             entity.Title = request.Title;
             entity.ListId = request.ListId;
+            entity.Created = DateTime.Now;
 
             _context.TodoItem.Add(entity);
 
-            await _context.SaveChangesAsync(cancellationToken);
+            var result = await _context.SaveChangesAsync(cancellationToken) > 0;
 
-            return new Response { Success = true };
+            if (!result) return Response<TodoItem>.Failure("Failed to create Todo Item");
+
+            return Response<TodoItem>.Success(entity);
         }
 
     }
